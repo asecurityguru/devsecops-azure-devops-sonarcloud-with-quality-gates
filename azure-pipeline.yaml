@@ -1,0 +1,10 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: |
+    mvn verify package sonar:sonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.organization=azuredevopsdevsecopsorg -Dsonar.projectKey=azuredevopsdevsecopsprojectkey -Dsonar.login=6213f47cb5929e327fe9e4b5
+  displayName: "Integrate SAST using SonarCloud in Azure DevOps DevSecOps Pipeline"
