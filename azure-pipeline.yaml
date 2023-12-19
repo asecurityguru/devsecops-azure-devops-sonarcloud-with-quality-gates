@@ -4,16 +4,13 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-jobs:
-- job: Sonar_SAST_Scan_Job
-  container: maven:3.8.1-openjdk-17-slim
-  steps:
+steps:
   - script: |
-      mvn verify package sonar:sonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.organization=azuredevopsdevsecopsoorg -Dsonar.projectKey=azuredevopsadodevsecopsprojectkey -Dsonar.login=14ad4797c02810a818f21384add02744d3f9e34d
+      sudo apt-get update
+      sudo apt-get -y install curl jq
+      mvn verify package sonar:sonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.organization=azuredevopsdevsecopsoorg -Dsonar.projectKey=azuredevsecopsoprojectkey -Dsonar.token=d268968115b4935bcd007ff54f01906c18e33cb6
       sleep 5
-      sudo apt update
-      sudo apt install curl jq 
-      quality_status=$(curl -s -u 14ad4797c02810a818f21384add02744d3f9e34d: https://sonarcloud.io/api/qualitygates/project_status?projectKey=azuredevopsadodevsecopsprojectkey | jq -r '.projectStatus.status')
+      quality_status=$(curl -s -u d268968115b4935bcd007ff54f01906c18e33cb6: https://sonarcloud.io/api/qualitygates/project_status?projectKey=azuredevopsadodevsecopsprojectkey | jq -r '.projectStatus.status')
       echo "SonarCloud analysistatus is $quality_status"; 
       if [[ $quality_status == "ERROR" ]] ; then exit 1;fi
     displayName: "Integrate SAST using SonarCloud to populate code coverage in Azure DevOps DevSecOps Pipeline"
