@@ -4,13 +4,22 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
+jobs:
+- job: run_sonarcloud_with_java_17
+  displayName: 'Run SonarCloud Analysis with Java Version 17'
+  steps:
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '17'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
   - script: |
       sudo apt-get update
       sudo apt-get -y install curl jq
       mvn verify package sonar:sonar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.organization=azuredevopsdevsecopsoorg -Dsonar.projectKey=azuredevsecopsoprojectkey -Dsonar.token=d268968115b4935bcd007ff54f01906c18e33cb6
       sleep 5
       quality_status=$(curl -s -u d268968115b4935bcd007ff54f01906c18e33cb6: https://sonarcloud.io/api/qualitygates/project_status?projectKey=azuredevsecopsoprojectkey | jq -r '.projectStatus.status')
-      echo "SonarCloud analysistatus is $quality_status"; 
+      echo "SonarCloud analysis status is $quality_status"; 
       if [[ $quality_status == "ERROR" ]] ; then exit 1;fi
     displayName: "Integrate SAST using SonarCloud to populate code coverage in Azure DevOps DevSecOps Pipeline"
